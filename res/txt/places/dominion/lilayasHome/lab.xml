@@ -859,15 +859,31 @@
 		As she hears you explaining your dilemma, your [lilaya.relation(pc)] crosses her arms and tuts in disapproval. Shaking her head as you finish talking, she asks, [lilaya.speech(How did you end up in such a ridiculous situation? Were you just going around Dominion putting on any old piece of clothing you found lying on the ground? No, wait, don't answer. I feel as though I'd regret finding out.)]
 	</p>
 	<p>
-		Asking Lilaya if she can help, you're pleased to see the annoyed expression on her face quickly soften as she replies, [lilaya.speech(Yes, I can help. Ordinarily, I'd refuse to unseal any of your clothing to teach you a lesson about being so careless, but seeing as you're completely unable to get yourself out of this mess, I'll remove the seals from all of your clothing. Just come and stand over here, please.)]
+		Asking Lilaya if she can help, you're pleased to see the annoyed expression on her face quickly soften as she replies, [lilaya.speech(Yes, I can help. Ordinarily, I'd refuse to unseal any of your clothing to teach you a lesson about being so careless, but seeing as you're completely unable to get yourself out of this mess, I'll make you an offer. The equipment to unseal clothing is quite expensive, so if you compensate me with [#flags.getSavedLong('JINX_REMOVAL_COST')] flames, I'll unseal your clothes.)]
 	</p>
 	<p>
 		Moving up next to Lilaya, you hold still as she unseals your clothing. After just a few moments she's done, and after you've thanked her and stepped back, she asks you if there was anything else you needed.
 	</p>
 	]]>
 	</htmlContent>
-	
-	
+
+
+	<!-- LAB_JINX_REMOVAL_AGREE -->
+
+	<htmlContent tag="LAB_JINX_REMOVAL_AGREE"><![CDATA[
+	<p>
+		You nod sheepishly and hand her the flames. [pc.speech(Yes please)].
+	</p>
+	<p>
+		She sighs. [lilaya.speech(Just come and stand over here, please.)]
+	</p>
+	<p>
+		Moving up next to Lilaya, you hold still as she unseals your clothing. After just a few moments she's done, and after you've thanked her and stepped back, she asks you if there was anything else you needed.
+	</p>
+	]]>
+	</htmlContent>
+
+
 	<!-- LILAYA_SCIENTIST_OUTFIT -->
 	
 	<htmlContent tag="LILAYA_SCIENTIST_OUTFIT"><![CDATA[

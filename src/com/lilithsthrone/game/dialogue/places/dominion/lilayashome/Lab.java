@@ -27,6 +27,7 @@ import com.lilithsthrone.game.dialogue.responses.ResponseSex;
 import com.lilithsthrone.game.dialogue.responses.ResponseTag;
 import com.lilithsthrone.game.dialogue.utils.UtilText;
 import com.lilithsthrone.game.inventory.clothing.AbstractClothing;
+import com.lilithsthrone.game.inventory.enchanting.ItemEffect;
 import com.lilithsthrone.game.inventory.item.ItemType;
 import com.lilithsthrone.game.sex.managers.universal.SMGeneric;
 import com.lilithsthrone.game.sex.managers.universal.SMSitting;
@@ -371,15 +372,8 @@ public class Lab {
 				&& Main.game.getPlayer().getClothingCurrentlyEquipped().stream().anyMatch(c -> c.isSelfTransformationInhibiting())
 				&& Main.game.getPlayer().getClothingCurrentlyEquipped().stream().anyMatch(c -> c.isSealed())) {
 			generatedResponses.add(new Response("Sealed problem",
-					"Tell Lilaya that you have some enchanted clothing sealed onto you, and that due to another enchantment on some of your clothing, you cannot remove it."
-							+ "<br/>[style.italicsMinorGood(Lilaya will unseal all your clothing!)]",
-						LAB_JINX_REMOVAL){
-				@Override
-				public void effects() {
-					for(AbstractClothing clothing : new ArrayList<>(Main.game.getPlayer().getClothingCurrentlyEquipped())) {
-						clothing.setSealed(false);
-					}
-				}
+					"Tell Lilaya that you have some enchanted clothing sealed onto you, and that due to another enchantment on some of your clothing, you cannot remove it.",
+					LAB_JINX_REMOVAL) {
 			});
 		}
 		
@@ -957,6 +951,64 @@ public class Lab {
 		}
 		@Override
 		public Response getResponse(int responseTab, int index) {
+			long cost = Main.game.getDialogueFlags().getSavedLong("JINX_REMOVAL_COST");
+			List<Response> responses = new ArrayList<>();
+			if (Main.game.getPlayer().getMoney() >= cost) {
+				responses.add(new Response(
+						"Agree (<span style='color:" + PresetColour.CURRENCY_GOLD.toWebHexString() + ";'>" + UtilText.getCurrencySymbol() + "</span> " + cost + ")",
+						"Hand Lilaya the flames and allow her to unseal your clothing." +
+								"<br/>[style.italicsMinorGood(Lilaya will unseal all your clothing!)]",
+						LAB_JINX_REMOVAL_AGREE
+				) {
+					@Override
+					public void effects() {
+						Main.game.getPlayer().incrementMoney((int) -cost);
+						for (AbstractClothing clothing : new ArrayList<>(Main.game.getPlayer().getClothingCurrentlyEquipped())) {
+							clothing.setSealed(false);
+						}
+					}
+				});
+			} else {
+				responses.add(new Response(
+						"No Money",
+						"Tell Lilaya that you can't afford it and will come back later.",
+						LAB_ENTRY
+				));
+			}
+			responses.add(new Response(
+					"Decline",
+					"Tell Lilaya that you'd like to leave the seals on for now.",
+					LAB_ENTRY
+			));
+			if (index >= 1 && index <= responses.size()) {
+				return responses.get(index - 1);
+			} else {
+				return null;
+			}
+		}
+
+		@Override
+		public void applyPreParsingEffects() {
+			long cost = 0;
+			for (AbstractClothing clothing : new ArrayList<>(Main.game.getPlayer().getClothingCurrentlyEquipped())) {
+				if (clothing.isSealed()) {
+					cost += clothing.getJinxRemovalCost(Main.game.getPlayer(), true);
+				}
+			}
+			cost *= 10;
+			Main.game.getDialogueFlags().setSavedLong("JINX_REMOVAL_COST", cost);
+			super.applyPreParsingEffects();
+		}
+	};
+
+	public static final DialogueNode LAB_JINX_REMOVAL_AGREE = new DialogueNode("", "", true) {
+		@Override
+		public String getContent() {
+			return UtilText.parseFromXMLFile("places/dominion/lilayasHome/lab", "LAB_JINX_REMOVAL_AGREE");
+		}
+
+		@Override
+		public Response getResponse(int responseTab, int index) {
 			return LAB_ENTRY.getResponse(0, index);
 		}
 	};
@@ -966,6 +1018,7 @@ public class Lab {
 		public String getContent() {
 			return "";
 		}
+
 		@Override
 		public Response getResponse(int responseTab, int index) {
 			return LAB_ENTRY.getResponse(0, index);
