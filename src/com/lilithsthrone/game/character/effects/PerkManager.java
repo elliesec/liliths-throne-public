@@ -13,6 +13,7 @@ import com.lilithsthrone.game.character.GameCharacter;
 import com.lilithsthrone.game.character.attributes.Attribute;
 import com.lilithsthrone.game.character.fetishes.Fetish;
 import com.lilithsthrone.game.character.persona.SexualOrientation;
+import com.lilithsthrone.game.character.race.Race;
 import com.lilithsthrone.main.Main;
 import com.lilithsthrone.utils.Pathing;
 import com.lilithsthrone.utils.Util;
@@ -569,8 +570,9 @@ public enum PerkManager {
 				
 				// Perks that should not be chosen outside of requirements:
 				List<AbstractPerk> deniedPerks = new ArrayList<>();
-				deniedPerks.add(Perk.OBSERVANT);
-				deniedPerks.add(Perk.ORGASMIC_LEVEL_DRAIN);
+				if (character.getBody() == null || character.getRace() != Race.DEMON) {
+					deniedPerks.add(Perk.ORGASMIC_LEVEL_DRAIN);
+				}
 				deniedPerks.add(Perk.CHUUNI);
 				deniedPerks.add(Perk.BARREN);
 				deniedPerks.add(Perk.FIRING_BLANKS);
