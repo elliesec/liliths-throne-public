@@ -63,8 +63,8 @@ public class HarpyNestsAttacker extends NPC {
 		if(!isImported) {
 			this.setLocation(Main.game.getPlayer(), true);
 			
-			// Set random level from 2 to 5:
-			setLevel(Util.random.nextInt(4) + 2);
+			// Set random level from 2 to 8:
+			setLevel(Util.random.nextInt(7) + 2);
 			
 			// RACE & NAME:
 			

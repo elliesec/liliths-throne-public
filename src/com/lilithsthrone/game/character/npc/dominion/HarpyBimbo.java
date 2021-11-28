@@ -81,7 +81,7 @@ public class HarpyBimbo extends NPC {
 						+ " In order to get into her good graces, most of her flock try to mimic her behaviour and appearance."
 						+ " As a result, Brittany's flock is primarily made up of bleach-blonde bimbos.",
 				24, Month.MARCH, 17,
-				7, Gender.F_V_B_FEMALE, Subspecies.HARPY, RaceStage.LESSER,
+				10, Gender.F_V_B_FEMALE, Subspecies.HARPY, RaceStage.LESSER,
 				new CharacterInventory(30), WorldType.HARPY_NEST, PlaceType.HARPY_NESTS_HARPY_NEST_YELLOW, true);
 		
 		if(!isImported) {

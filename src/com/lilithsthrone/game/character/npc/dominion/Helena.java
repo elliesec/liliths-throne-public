@@ -89,7 +89,7 @@ public class Helena extends NPC {
 				"Helena is an extremely powerful harpy matriarch, and is in control of one of the largest harpy flocks in Dominion."
 						+ " Her beauty rivals that of even the most gorgeous of succubi, which, combined with her sharp mind and regal personality, makes her somewhat of an idol in harpy society.",
 				26, Month.MAY, 3,
-				10, Gender.F_V_B_FEMALE, Subspecies.HARPY_SWAN, RaceStage.LESSER,
+				20, Gender.F_V_B_FEMALE, Subspecies.HARPY_SWAN, RaceStage.LESSER,
 				new CharacterInventory(30), WorldType.HELENAS_APARTMENT, PlaceType.HELENA_APARTMENT_HELENA_BEDROOM, true);
 		
 		if(!isImported) {
@@ -161,9 +161,9 @@ public class Helena extends NPC {
 		PerkManager.initialisePerks(this,
 				Util.newArrayListOfValues(),
 				Util.newHashMapOfValues(
-						new Value<>(PerkCategory.PHYSICAL, 0),
+						new Value<>(PerkCategory.PHYSICAL, 1),
 						new Value<>(PerkCategory.LUST, 0),
-						new Value<>(PerkCategory.ARCANE, 1)));
+						new Value<>(PerkCategory.ARCANE, 2)));
 	}
 	
 	@Override

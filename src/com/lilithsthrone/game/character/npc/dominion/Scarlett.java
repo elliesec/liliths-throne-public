@@ -85,7 +85,7 @@ public class Scarlett extends NPC {
 				"Scarlett is the owner of the rather unoriginally named establishment 'Scarlett's shop'."
 						+ " Rude, loud, and quick to anger, Scarlett isn't a very pleasant person to have to deal with.",
 				23, Month.NOVEMBER, 14,
-				5, Gender.M_P_MALE, Subspecies.HARPY, RaceStage.LESSER,
+				8, Gender.M_P_MALE, Subspecies.HARPY, RaceStage.LESSER,
 				new CharacterInventory(30), WorldType.SLAVER_ALLEY, PlaceType.SLAVER_ALLEY_SCARLETTS_SHOP, true);
 		
 	}

@@ -78,7 +78,7 @@ public class HarpyDominant extends NPC {
 				"One of the more notable harpy matriarchs, Diana is the leader of a flock of harpies."
 						+ " As cruel as harpies come, Diana rules her flock with an iron fist, harshly punishing any harpies that try to challenge her dominance.",
 				33, Month.OCTOBER, 2,
-				7, Gender.F_V_B_FEMALE, Subspecies.HARPY, RaceStage.LESSER,
+				10, Gender.F_V_B_FEMALE, Subspecies.HARPY, RaceStage.LESSER,
 				new CharacterInventory(30), WorldType.HARPY_NEST, PlaceType.HARPY_NESTS_HARPY_NEST_RED, true);
 		
 	}
@@ -109,8 +109,8 @@ public class HarpyDominant extends NPC {
 		PerkManager.initialisePerks(this,
 				Util.newArrayListOfValues(),
 				Util.newHashMapOfValues(
-						new Value<>(PerkCategory.PHYSICAL, 1),
-						new Value<>(PerkCategory.LUST, 0),
+						new Value<>(PerkCategory.PHYSICAL, 2),
+						new Value<>(PerkCategory.LUST, 1),
 						new Value<>(PerkCategory.ARCANE, 0)));
 	}
 
