@@ -1,17 +1,5 @@
 package com.lilithsthrone.game.dialogue.encounters;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import com.lilithsthrone.game.character.npc.misc.NPCOffspring;
-import com.lilithsthrone.game.character.npc.misc.OffspringSeed;
-import org.w3c.dom.Document;
-
 import com.lilithsthrone.controller.xmlParsing.Element;
 import com.lilithsthrone.game.character.EquipClothingSetting;
 import com.lilithsthrone.game.character.effects.StatusEffect;
@@ -19,6 +7,8 @@ import com.lilithsthrone.game.character.fetishes.Fetish;
 import com.lilithsthrone.game.character.gender.Gender;
 import com.lilithsthrone.game.character.npc.NPC;
 import com.lilithsthrone.game.character.npc.dominion.EnforcerPatrol;
+import com.lilithsthrone.game.character.npc.misc.NPCOffspring;
+import com.lilithsthrone.game.character.npc.misc.OffspringSeed;
 import com.lilithsthrone.game.character.persona.Occupation;
 import com.lilithsthrone.game.dialogue.DialogueManager;
 import com.lilithsthrone.game.dialogue.DialogueNode;
@@ -31,6 +21,11 @@ import com.lilithsthrone.utils.Util;
 import com.lilithsthrone.utils.Util.Value;
 import com.lilithsthrone.world.WorldType;
 import com.lilithsthrone.world.places.PlaceType;
+import org.w3c.dom.Document;
+
+import java.io.File;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * @since 0.4
@@ -211,16 +206,17 @@ public abstract class AbstractEncounter {
 		for(String id : Main.game.getPlayer().getSlavesOwned()) {
 			try {
 				NPC slave = (NPC) Main.game.getNPCById(id);
-				if(slave.hasSlavePermissionSetting(SlavePermissionSetting.SEX_INITIATE_PLAYER)
-						&& slave.getSlaveJob(Main.game.getHourOfDay())==SlaveJob.IDLE
-						&& slave.getLocationPlace().getPlaceType()!=PlaceType.SLAVER_ALLEY_SLAVERY_ADMINISTRATION 
+
+				if (slave.getSlaveJob(Main.game.getHourOfDay()) == SlaveJob.IDLE
+						&& slave.getLocationPlace().getPlaceType() != PlaceType.SLAVER_ALLEY_SLAVERY_ADMINISTRATION
 						&& slave.hasSlavePermissionSetting(SlavePermissionSetting.GENERAL_OUTSIDE_FREEDOM)
 						&& (!Main.game.getPlayer().getLocationPlace().getPlaceType().isPopulated() || slave.hasFetish(Fetish.FETISH_EXHIBITIONIST))
-						&& slave.isAttractedTo(Main.game.getPlayer())) {
-					if(slave.getLastTimeHadSex()+60*4<Main.game.getMinutesPassed()) {
+						&& slave.mightFuckPlayerAsSlave()
+				) {
+					if (slave.getLastTimeHadSex() + 60 * 4 < Main.game.getMinutesPassed()) {
 						slaves.add(slave);
 					}
-					if(slave.hasStatusEffect(StatusEffect.PENT_UP_SLAVE)) {
+					if (slave.hasStatusEffect(StatusEffect.PENT_UP_SLAVE)) {
 						hornySlaves.add(slave);
 					}
 				}

@@ -4471,7 +4471,7 @@ public abstract class GameCharacter implements XMLSaving {
 	
 	public float getDailyObedienceChange() {
 		float totalObedienceChange = 0;
-		
+
 		for (int hour = 0; hour < 24; hour++) {
 			SlaveJob job = this.getSlaveJob(hour);
 			if(this.getSlaveJob(hour)==SlaveJob.IDLE) {
@@ -4480,10 +4480,20 @@ public abstract class GameCharacter implements XMLSaving {
 				totalObedienceChange += job.getObedienceGain(hour, this);
 			}
 		}
-		
+
 		// Rounding is to get rid of floating point ridiculousness (e.g. 2.3999999999999999999999):
 		return (Math.round(totalObedienceChange*100)/100f) * (this.isSlave() && this.getOwner().hasTrait(Perk.JOB_TEACHER, true)?3:1);
 	}
+
+    public boolean mightFuckPlayerAsSlave() {
+        final PlayerCharacter player = Main.game.getPlayer();
+        return this.isAttractedTo(player)
+            && (player.hasFetish(Fetish.FETISH_SUBMISSIVE) || !player.hasFetish(Fetish.FETISH_DOMINANT) || player.getLevel() + 5 < this.getLevel())
+            && (this.hasStatusEffect(StatusEffect.PENT_UP_SLAVE)
+                || this.hasFetish(Fetish.FETISH_DOMINANT)
+                || this.getObedienceBasic() == ObedienceLevelBasic.DISOBEDIENT
+        );
+    }
 
 	public int getTotalSlavesWorkingJob(SlaveJob job) {
 		int i=0;
@@ -4501,7 +4511,7 @@ public abstract class GameCharacter implements XMLSaving {
 		}
 		return i;
 	}
-	
+
 	public int getSlavesWorkingJob(int hour, SlaveJob job) {
 		int i=0;
 		for(String id : this.getSlavesOwned()) {
@@ -5864,9 +5874,7 @@ public abstract class GameCharacter implements XMLSaving {
 			if(isPlayer()) {
 				Main.getProperties().setValue(PropertyValue.levelUpHightlight, true);
 				
-			} else if((!this.isSlave() || !this.getOwner().isPlayer())
-					&& (!this.isElemental() || !((Elemental)this).getSummoner().isPlayer())
-					&& !Main.game.getPlayer().getFriendlyOccupants().contains(this.id)){
+			} else if((!this.isElemental() || !((Elemental)this).getSummoner().isPlayer())){
 				// NPCs who are not 'controlled' by the player automatically level up their perks:
 				Set<AbstractPerk> perksAdded = PerkManager.initialisePerks(this, true);
 				for(AbstractPerk perk : perksAdded) {

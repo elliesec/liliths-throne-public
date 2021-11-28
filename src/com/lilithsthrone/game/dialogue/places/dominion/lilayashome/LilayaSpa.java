@@ -12,6 +12,7 @@ import com.lilithsthrone.game.character.GameCharacter;
 import com.lilithsthrone.game.character.attributes.AffectionLevelBasic;
 import com.lilithsthrone.game.character.attributes.ObedienceLevelBasic;
 import com.lilithsthrone.game.character.effects.StatusEffect;
+import com.lilithsthrone.game.character.fetishes.Fetish;
 import com.lilithsthrone.game.character.npc.NPC;
 import com.lilithsthrone.game.character.npc.dominion.Arthur;
 import com.lilithsthrone.game.character.npc.dominion.Lilaya;
@@ -1802,19 +1803,24 @@ public class LilayaSpa {
 				};
 			}
 			if(index-1<slavesForMassage.size()) {
-				GameCharacter slave = slavesForMassage.get(index-1);
+				final GameCharacter slave = slavesForMassage.get(index - 1);
+				final boolean slaveDominant = slave.hasFetish(Fetish.FETISH_DOMINANT);
+				final boolean slaveDisobedient = slave.getObedienceValue() < ObedienceLevelBasic.DISOBEDIENT.getMaximumValue();
+				final boolean slaveMightFuckPlayer = slave.mightFuckPlayerAsSlave();
+				String extraText = slaveMightFuckPlayer
+						? slave.hasStatusEffect(StatusEffect.PENT_UP_SLAVE)
+						? "<br/>[style.italicsSex(As [npc.name] is currently pent up, [npc.she] is certain to start fucking you during the massage!)]"
+						: slaveDisobedient
+						? "<br/>[style.italicsSex(As [npc.name] is disobedient, [npc.she] might start fucking you during the massage!)]"
+						: slaveDominant
+						? "<br/>[style.italicsSex(As [npc.name] is feeling in a dominant mood, [npc.she] might start fucking you during the massage!)]"
+						: "" : "";
 				return new Response(UtilText.parse(slave, "[npc.Name]"),
-						UtilText.parse(slave,
-								"Lie down on one of the loungers and have [npc.name] give you a massage."
-								+ (slave.hasSlavePermissionSetting(SlavePermissionSetting.SEX_INITIATE_PLAYER) && slave.isAttractedTo(Main.game.getPlayer())
-									?(slave.hasStatusEffect(StatusEffect.PENT_UP_SLAVE)
-										?"<br/>[style.italicsSex(As [npc.name] has permission to use you for sex, and as [npc.she] is currently pent up, [npc.she] is certain to start fucking you during the massage!)]"
-										:"<br/>[style.italicsSex(As [npc.name] has permission to use you for sex, [npc.she] might start fucking you during the massage!)]")
-									:"")),
+						UtilText.parse(slave, "Lie down on one of the loungers and have [npc.name] give you a massage." + extraText),
 						SPA_MASSAGE) {
 					@Override
 					public Colour getHighlightColour() {
-						if(slave.hasSlavePermissionSetting(SlavePermissionSetting.SEX_INITIATE_PLAYER) && slave.isAttractedTo(Main.game.getPlayer())) {
+						if (slaveMightFuckPlayer) {
 							return PresetColour.GENERIC_SEX;
 						}
 						return super.getHighlightColour();
@@ -1822,7 +1828,7 @@ public class LilayaSpa {
 					@Override
 					public void effects() {
 						massageSlave = slave;
-						if(slave.hasSlavePermissionSetting(SlavePermissionSetting.SEX_INITIATE_PLAYER) && slave.isAttractedTo(Main.game.getPlayer())) {
+						if(slaveMightFuckPlayer) {
 							massageSlaveSex = slave.hasStatusEffect(StatusEffect.PENT_UP_SLAVE) || Math.random()<0.5f;
 						} else {
 							massageSlaveSex = false;

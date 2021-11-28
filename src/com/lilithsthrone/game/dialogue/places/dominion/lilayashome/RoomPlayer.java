@@ -1210,10 +1210,7 @@ public class RoomPlayer {
 		for(String slaveId : Main.game.getPlayer().getSlavesOwned()) {
 			try {
 				GameCharacter slave = Main.game.getNPCById(slaveId);
-				if(slave.getSlaveJob(hour)==SlaveJob.BEDROOM
-						&& slave.hasSlavePermissionSetting(SlavePermissionSetting.SEX_INITIATE_PLAYER)
-						&& slave.isAttractedTo(Main.game.getPlayer())
-						&& slave.hasStatusEffect(StatusEffect.PENT_UP_SLAVE)) {
+				if(slave.getSlaveJob(hour)==SlaveJob.BEDROOM && slave.mightFuckPlayerAsSlave()) {
 					charactersPresent.add(slave);
 				}
 				

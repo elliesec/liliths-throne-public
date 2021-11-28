@@ -1,16 +1,5 @@
 package com.lilithsthrone.game.dialogue.encounters;
 
-import java.io.File;
-import java.lang.reflect.Field;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import com.lilithsthrone.game.character.EquipClothingSetting;
 import com.lilithsthrone.game.character.GameCharacter;
 import com.lilithsthrone.game.character.attributes.Attribute;
@@ -18,18 +7,9 @@ import com.lilithsthrone.game.character.effects.Perk;
 import com.lilithsthrone.game.character.effects.StatusEffect;
 import com.lilithsthrone.game.character.gender.Gender;
 import com.lilithsthrone.game.character.npc.NPC;
-import com.lilithsthrone.game.character.npc.dominion.Cultist;
-import com.lilithsthrone.game.character.npc.dominion.DominionAlleywayAttacker;
-import com.lilithsthrone.game.character.npc.dominion.DominionSuccubusAttacker;
-import com.lilithsthrone.game.character.npc.dominion.HarpyNestsAttacker;
-import com.lilithsthrone.game.character.npc.dominion.Lumi;
-import com.lilithsthrone.game.character.npc.dominion.RentalMommy;
+import com.lilithsthrone.game.character.npc.dominion.*;
 import com.lilithsthrone.game.character.npc.misc.OffspringSeed;
-import com.lilithsthrone.game.character.npc.submission.BatCavernLurkerAttacker;
-import com.lilithsthrone.game.character.npc.submission.BatCavernSlimeAttacker;
-import com.lilithsthrone.game.character.npc.submission.ImpAttacker;
-import com.lilithsthrone.game.character.npc.submission.RebelBaseInsaneSurvivor;
-import com.lilithsthrone.game.character.npc.submission.SubmissionAttacker;
+import com.lilithsthrone.game.character.npc.submission.*;
 import com.lilithsthrone.game.character.quests.Quest;
 import com.lilithsthrone.game.character.quests.QuestLine;
 import com.lilithsthrone.game.character.race.Race;
@@ -65,6 +45,13 @@ import com.lilithsthrone.world.WorldType;
 import com.lilithsthrone.world.places.AbstractPlaceType;
 import com.lilithsthrone.world.places.PlaceType;
 
+import java.io.File;
+import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.*;
+import java.util.Map.Entry;
+
 /**
  * @since 0.1.0
  * @version 0.4
@@ -92,14 +79,14 @@ public class Encounter {
 				for(String id : Main.game.getPlayer().getSlavesOwned()) {
 					try {
 						NPC slave = (NPC) Main.game.getNPCById(id);
-						if(slave.hasSlavePermissionSetting(SlavePermissionSetting.SEX_INITIATE_PLAYER)
-								&& slave.getSlaveJob(Main.game.getHourOfDay())==SlaveJob.IDLE
+						if (slave.getSlaveJob(Main.game.getHourOfDay()) == SlaveJob.IDLE
 								&& slave.hasSlavePermissionSetting(SlavePermissionSetting.GENERAL_HOUSE_FREEDOM)
-								&& slave.isAttractedTo(Main.game.getPlayer())) {
-							if(slave.getLastTimeHadSex()+60*4<Main.game.getMinutesPassed()) {
+								&& slave.mightFuckPlayerAsSlave()
+						) {
+							if (slave.getLastTimeHadSex() + 60 * 4 < Main.game.getMinutesPassed()) {
 								slaves.add(slave);
 							}
-							if(slave.hasStatusEffect(StatusEffect.PENT_UP_SLAVE)) {
+							if (slave.hasStatusEffect(StatusEffect.PENT_UP_SLAVE)) {
 								hornySlaves.add(slave);
 							}
 						}
