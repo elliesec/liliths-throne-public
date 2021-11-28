@@ -25,12 +25,13 @@
 	
 	<generationAttributes>
 		<cond1 constant="true"><![CDATA[RND.nextInt(100)<=75]]></cond1>
-		<cond2 constant="true"><![CDATA[RND.nextInt(100)<=50]]></cond2> <!-- knuckle dusters or pipe -->
-		<cond3 constant="true"><![CDATA[RND.nextInt(100)<=25]]></cond3>
+		<cond2 constant="true"><![CDATA[RND.nextInt(100)<=75]]></cond2> <!-- knuckle dusters or pipe -->
+		<cond3 constant="true"><![CDATA[RND.nextInt(100)<=25]]></cond3> <!-- gloves -->
 		<cond4 constant="true"><![CDATA[RND.nextInt(100)<=90]]></cond4> <!-- weapons -->
 		<cond5 constant="true"><![CDATA[npc.getLegConfiguration()==LEG_CONFIGURATION_BIPEDAL && npc.getFootStructure()==FOOT_STRUCTURE_PLANTIGRADE]]></cond5> <!-- is bipedal -->
-		
-		
+		<condOffhandMelee constant="true"><![CDATA[RND.nextInt(100)<=50]]></condOffhandMelee>
+		<condOffhandRanged constant="true"><![CDATA[RND.nextInt(100)<=50]]></condOffhandRanged>
+
 		<presetColourGroup1>
 			<randomColour>CLOTHING_BLACK</randomColour>
 			<randomColour>CLOTHING_GREEN_DRAB</randomColour>
@@ -80,10 +81,19 @@
 		
         <offhandWeapons>
 			<weapon>
-				<conditional><![CDATA[cond4 && cond2 && RND.nextInt(100)<=50]]></conditional>
+				<conditional><![CDATA[cond4 && cond2 && condOffhandMelee]]></conditional>
 				<type>innoxia_knuckleDusters_knuckle_dusters</type>
 				<damageTypes>
 					<damage>PHYSICAL</damage>
+				</damageTypes>
+				<primaryColours/>
+				<secondaryColours/>
+			</weapon>
+			<weapon>
+				<conditional><![CDATA[cond4 && cond2 && condOffhandRanged]]></conditional>
+				<type>ellie_aphrodisiacBombs_aphrodisiacBomb</type>
+				<damageTypes>
+					<damage>LUST</damage>
 				</damageTypes>
 				<primaryColours/>
 				<secondaryColours/>

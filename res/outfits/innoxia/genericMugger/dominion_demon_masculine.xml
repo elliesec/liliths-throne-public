@@ -93,6 +93,17 @@
 				<primaryColours/>
 				<secondaryColours/>
 			</weapon>
+			<weapon>
+				<conditional><![CDATA[condWeapons && !condDagger && condDualWielding]]></conditional>
+				<types>
+					<type>ellie_aphrodisiacBombs_aphrodisiacBomb</type>
+				</types>
+				<damageTypes>
+					<damge>LUST</damge>
+				</damageTypes>
+				<primaryColours/>
+				<secondaryColours/>
+			</weapon>
         </offhandWeapons>
 		
 		

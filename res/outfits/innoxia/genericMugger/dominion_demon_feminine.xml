@@ -32,7 +32,7 @@
 		<condGoth constant="true"><![CDATA[RND.nextInt(100)<=15]]></condGoth>
 		<condExhibitionist constant="true"><![CDATA[npc.hasFetish(FETISH_EXHIBITIONIST)]]></condExhibitionist>
 		<condFishnetTop constant="true"><![CDATA[RND.nextInt(100)<=50]]></condFishnetTop>
-		
+
 		
 		<presetColourGroup1 singleColour="true">
 			<randomColour>CLOTHING_BLACK_JET</randomColour>
@@ -105,6 +105,17 @@
 					<damage>FIRE</damage>
 					<damage>ICE</damage>
 					<damage>POISON</damage>
+				</damageTypes>
+				<primaryColours/>
+				<secondaryColours/>
+			</weapon>
+			<weapon>
+				<conditional><![CDATA[condWeapons && !condDagger && condDualWielding]]></conditional>
+				<types>
+					<type>ellie_aphrodisiacBombs_aphrodisiacBomb</type>
+				</types>
+				<damageTypes>
+					<damge>LUST</damge>
 				</damageTypes>
 				<primaryColours/>
 				<secondaryColours/>

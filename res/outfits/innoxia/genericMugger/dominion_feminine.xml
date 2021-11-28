@@ -30,6 +30,8 @@
 		<cond4 constant="true"><![CDATA[RND.nextInt(100)<=25]]></cond4> <!-- For legwear femininity -->
 		<cond5 constant="true"><![CDATA[RND.nextInt(100)<=90]]></cond5> <!-- weapons -->
 		<cond6 constant="true"><![CDATA[npc.getLegConfiguration()==LEG_CONFIGURATION_BIPEDAL && npc.getFootStructure()==FOOT_STRUCTURE_PLANTIGRADE]]></cond6> <!-- is bipedal -->
+		<condOffhandMelee constant="true"><![CDATA[RND.nextInt(100)<=50]]></condOffhandMelee>
+		<condOffhandRanged constant="true"><![CDATA[RND.nextInt(100)<=50]]></condOffhandRanged>
 		
 		<presetColourGroup1>
 			<randomColour>CLOTHING_BLACK</randomColour>
@@ -74,10 +76,19 @@
 		
         <offhandWeapons>
 			<weapon>
-				<conditional><![CDATA[cond5 && cond2 && RND.nextInt(100)<=50]]></conditional>
+				<conditional><![CDATA[cond4 && cond2 && condOffhandMelee]]></conditional>
 				<type>innoxia_knuckleDusters_knuckle_dusters</type>
 				<damageTypes>
 					<damage>PHYSICAL</damage>
+				</damageTypes>
+				<primaryColours/>
+				<secondaryColours/>
+			</weapon>
+			<weapon>
+				<conditional><![CDATA[cond4 && cond2 && condOffhandRanged]]></conditional>
+				<type>ellie_aphrodisiacBombs_aphrodisiacBomb</type>
+				<damageTypes>
+					<damage>LUST</damage>
 				</damageTypes>
 				<primaryColours/>
 				<secondaryColours/>
