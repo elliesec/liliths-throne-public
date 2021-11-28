@@ -18,6 +18,7 @@ import com.lilithsthrone.game.character.race.Race;
 import com.lilithsthrone.game.dialogue.DialogueFlags;
 import com.lilithsthrone.game.dialogue.DialogueNode;
 import com.lilithsthrone.game.dialogue.npcDialogue.QuickTransformations;
+import com.lilithsthrone.game.dialogue.npcDialogue.common.AfterSexDefeatCommonDialogueNode;
 import com.lilithsthrone.game.dialogue.responses.Response;
 import com.lilithsthrone.game.dialogue.responses.ResponseCombat;
 import com.lilithsthrone.game.dialogue.responses.ResponseEffectsOnly;
@@ -1901,42 +1902,5 @@ public class BatCavernDialogue {
 		}
 	};
 	
-	public static final DialogueNode AFTER_SEX_DEFEAT = new DialogueNode("Collapse", "", true) {
-		
-		@Override
-		public int getSecondsPassed() {
-			return 15*60;
-		}
-		
-		@Override
-		public String getDescription(){
-			return "You're completely worn out from [npc.namePos] dominant treatment, and need a while to recover.";
-		}
-
-		@Override
-		public String getContent() {
-			return UtilText.parseFromXMLFile("encounters/submission/batCavern/"+getDialogueId(), "AFTER_SEX_DEFEAT", getAllCharacters());
-		}
-
-		@Override
-		public Response getResponse(int responseTab, int index) {
-			if (index == 1) {
-				return new Response("Continue", "Carry on your way.", AFTER_SEX_VICTORY) {
-					@Override
-					public void effects() {
-						if(getMugger().hasFlag(NPCFlagValue.genericNPCBetrayedByPlayer)) {
-							Main.game.banishNPC(getMugger());
-						}
-					}
-					@Override
-					public DialogueNode getNextDialogue(){
-						return Main.game.getDefaultDialogue(false);
-					}
-				};
-				
-			} else {
-				return null;
-			}
-		}
-	};
+	public static final DialogueNode AFTER_SEX_DEFEAT = new AfterSexDefeatCommonDialogueNode(3, AFTER_SEX_VICTORY);
 }

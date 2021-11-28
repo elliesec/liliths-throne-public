@@ -1835,5 +1835,5 @@ public class AlleywayDemonDialogue {
 		}
 	};
 	
-	public static final DialogueNode AFTER_SEX_DEFEAT = new AfterSexDefeatCommonDialogueNode(3, AFTER_SEX_VICTORY);
+	public static final DialogueNode AFTER_SEX_DEFEAT = new AfterSexDefeatCommonDialogueNode(4, AFTER_SEX_VICTORY);
 }

@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.lilithsthrone.game.character.body.valueEnums.FluidFlavour;
 import com.lilithsthrone.game.character.body.valueEnums.FluidModifier;
+import com.lilithsthrone.game.character.effects.AbstractPerk;
 import com.lilithsthrone.game.character.effects.Perk;
 import com.lilithsthrone.game.character.effects.PerkManager;
 import org.w3c.dom.Document;
@@ -143,13 +144,22 @@ public class DominionSuccubusAttacker extends NPC {
 			
 			this.addSpell(Spell.ARCANE_AROUSAL);
 			this.addSpell(Spell.TELEPATHIC_COMMUNICATION);
-			this.addSpellUpgrade(SpellUpgrade.TELEPATHIC_COMMUNICATION_1);
+			if (Util.random.nextInt(100) < 50) {
+				this.addSpell(Spell.ARCANE_CLOUD);
+			}
 
 			// Set starting perks based on the character's race
 			initPerkTreeAndBackgroundPerks();
-			if (Util.random.nextInt(100) < 25) {
-				PerkManager.initialisePerks(this, true, Util.newArrayListOfValues(Perk.ORGASMIC_LEVEL_DRAIN));
-			}
+			List<AbstractPerk> perks = new ArrayList<>();
+			if (Util.random.nextInt(100) < 25) { perks.add(Perk.ORGASMIC_LEVEL_DRAIN); }
+			if (this.hasFetish(Fetish.FETISH_IMPREGNATION) || Util.random.nextInt(100) < 20) { perks.add(Perk.FETISH_SEEDER); }
+			if (Util.random.nextInt(100) < 5) { perks.add(Perk.CHUUNI); }
+			if (Util.random.nextInt(100) < 40) { perks.add(Perk.PHYSIQUE_BOOST_MAJOR); }
+			if (Util.random.nextInt(100) < 40) { perks.add(Perk.SEDUCTION_BOOST_MAJOR); }
+			if (Util.random.nextInt(100) < 40) { perks.add(Perk.SEDUCTION_BOOST_MAJOR); }
+			if (Util.random.nextInt(100) < 40) { perks.add(Perk.ARCANE_BOOST_MAJOR); }
+
+			PerkManager.initialisePerks(this, true, perks);
 			this.setStartingCombatMoves();
 			loadImages();
 			
@@ -180,21 +190,34 @@ public class DominionSuccubusAttacker extends NPC {
 		this.incrementMoney((int) (this.getInventory().getNonEquippedValue() * 0.5f));
 		this.clearNonEquippedInventory(false);
 		Main.game.getCharacterUtils().generateItemsInInventory(this);
-		
+
 		Main.game.getCharacterUtils().equipClothingFromOutfitType(this, OutfitType.MUGGER, settings);
 	}
-	
+
+	@Override
+	public boolean addSpell(Spell spell) {
+		boolean spellAdded = super.addSpell(spell);
+		spell.getUpgradeList().stream().anyMatch((upgrade) -> {
+			if (Util.random.nextInt(100) < 60) {
+				this.addSpellUpgrade(upgrade);
+				return false;
+			}
+			return true;
+		});
+		return spellAdded;
+	}
+
 	@Override
 	public boolean isUnique() {
 		return false;
 	}
-	
+
 	@Override
 	public String getDescription() {
-		if(isSlave()) {
+		if (isSlave()) {
 			return UtilText.parse(this,
 					"Having lost [npc.herself] to [npc.her] powerful libido, [npc.name] ended up stalking the alleyways of Dominion in search of innocent citizens to force [npc.herself] on."
-					+ " Being unlucky enough to have been placed on the Enforcer's wanted list, and then to have encountered you, [npc.she] soon ended up being enslaved and owned by you.");
+							+ " Being unlucky enough to have been placed on the Enforcer's wanted list, and then to have encountered you, [npc.she] soon ended up being enslaved and owned by you.");
 		}
 		return UtilText.parse(this,
 				"Although all demons have an extremely powerful libido, some suffer from it far more than others."

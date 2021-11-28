@@ -1,9 +1,5 @@
 package com.lilithsthrone.game.dialogue.npcDialogue.dominion;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.lilithsthrone.game.PropertyValue;
 import com.lilithsthrone.game.character.GameCharacter;
 import com.lilithsthrone.game.character.attributes.AffectionLevel;
@@ -16,11 +12,8 @@ import com.lilithsthrone.game.character.quests.QuestLine;
 import com.lilithsthrone.game.dialogue.DialogueFlags;
 import com.lilithsthrone.game.dialogue.DialogueNode;
 import com.lilithsthrone.game.dialogue.npcDialogue.QuickTransformations;
-import com.lilithsthrone.game.dialogue.responses.Response;
-import com.lilithsthrone.game.dialogue.responses.ResponseCombat;
-import com.lilithsthrone.game.dialogue.responses.ResponseEffectsOnly;
-import com.lilithsthrone.game.dialogue.responses.ResponseSex;
-import com.lilithsthrone.game.dialogue.responses.ResponseTag;
+import com.lilithsthrone.game.dialogue.npcDialogue.common.AfterSexDefeatCommonDialogueNode;
+import com.lilithsthrone.game.dialogue.responses.*;
 import com.lilithsthrone.game.dialogue.utils.BodyChanging;
 import com.lilithsthrone.game.dialogue.utils.InventoryInteraction;
 import com.lilithsthrone.game.dialogue.utils.UtilText;
@@ -35,6 +28,10 @@ import com.lilithsthrone.utils.colours.Colour;
 import com.lilithsthrone.utils.colours.PresetColour;
 import com.lilithsthrone.world.Cell;
 import com.lilithsthrone.world.Weather;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @since 0.2.11
@@ -1805,40 +1802,5 @@ public class HarpyAttackerDialogue {
 		}
 	};
 	
-	public static final DialogueNode AFTER_SEX_DEFEAT = new DialogueNode("Collapse", "", true) {
-		
-		@Override
-		public int getSecondsPassed() {
-			return 15*60;
-		}
-		
-		@Override
-		public String getDescription(){
-			return "You're completely worn out from [npc.namePos] dominant treatment, and need a while to recover.";
-		}
-
-		@Override
-		public String getContent() {
-			return UtilText.parseFromXMLFile("encounters/dominion/harpyAttack", "AFTER_SEX_DEFEAT", getAllCharacters());
-		}
-
-		@Override
-		public Response getResponse(int responseTab, int index) {
-			if (index == 1) {
-				return new Response("Continue", "Carry on your way.", AFTER_SEX_VICTORY) {
-					@Override
-					public void effects() {
-						if(getHarpy().hasFlag(NPCFlagValue.genericNPCBetrayedByPlayer)) {
-							Main.game.banishNPC(getHarpy());
-						}
-					}
-					@Override
-					public DialogueNode getNextDialogue(){
-						return Main.game.getDefaultDialogue(false);
-					}
-				};
-			}
-			return null;
-		}
-	};
+	public static final DialogueNode AFTER_SEX_DEFEAT = new AfterSexDefeatCommonDialogueNode(1, AFTER_SEX_VICTORY);
 }
