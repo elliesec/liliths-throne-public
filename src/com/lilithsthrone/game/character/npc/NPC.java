@@ -3,16 +3,13 @@ package com.lilithsthrone.game.character.npc;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Random;
-import java.util.Set;
+import java.util.stream.Collectors;
 
+import com.lilithsthrone.game.inventory.*;
+import com.lilithsthrone.game.inventory.clothing.AbstractClothingType;
+import com.lilithsthrone.game.inventory.clothing.ClothingType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -77,9 +74,6 @@ import com.lilithsthrone.game.combat.spells.Spell;
 import com.lilithsthrone.game.dialogue.DialogueNode;
 import com.lilithsthrone.game.dialogue.responses.Response;
 import com.lilithsthrone.game.dialogue.utils.UtilText;
-import com.lilithsthrone.game.inventory.AbstractCoreItem;
-import com.lilithsthrone.game.inventory.CharacterInventory;
-import com.lilithsthrone.game.inventory.InventorySlot;
 import com.lilithsthrone.game.inventory.clothing.AbstractClothing;
 import com.lilithsthrone.game.inventory.enchanting.AbstractItemEffectType;
 import com.lilithsthrone.game.inventory.enchanting.ItemEffect;
@@ -2099,19 +2093,215 @@ public abstract class NPC extends GameCharacter implements XMLSaving {
 				}
 			}
 		}
-		
+
 		this.subspeciesPreference = species;
 		this.raceStagePreference = stage;
 	}
-	
+
+	public Set<AbstractClothing> generateBondageApplierClothing(GameCharacter target, GameCharacter equipper, int modifier) {
+		modifier = Math.max(1, Math.min(5, modifier));
+		if (!hasFetish(Fetish.FETISH_BONDAGE_APPLIER)) {
+			return Collections.emptySet();
+		}
+
+		List<AbstractClothing> clothings = ClothingType.getAllClothing()
+				.stream()
+				.filter((clothingType) -> {
+					List<ItemTag> tags = clothingType.getDefaultItemTags();
+					return !tags.contains(ItemTag.NO_RANDOM_SPAWN) &&
+							!tags.contains(ItemTag.NOT_FOR_SALE) &&
+							!tags.contains(ItemTag.UNIQUE_NO_NPC_EQUIP) &&
+							(
+								tags.contains(ItemTag.SOLD_BY_FINCH) ||
+								tags.contains(ItemTag.SOLD_BY_KATE) ||
+								tags.contains(ItemTag.PROVIDES_KEY) ||
+								tags.contains(ItemTag.SPREADS_FEET) ||
+								tags.contains(ItemTag.MUFFLES_SPEECH) ||
+								tags.contains(ItemTag.BLOCKS_SIGHT) ||
+								tags.contains(ItemTag.HINDERS_ARM_MOVEMENT) ||
+								tags.contains(ItemTag.HINDERS_LEG_MOVEMENT) ||
+								tags.contains(ItemTag.PREVENTS_ERECTION_PHYSICAL) ||
+								tags.contains(ItemTag.CHASTITY) ||
+								tags.contains(ItemTag.PLUGS_ANUS) ||
+								tags.contains(ItemTag.SEALS_ANUS) ||
+								tags.contains(ItemTag.PLUGS_VAGINA) ||
+								tags.contains(ItemTag.SEALS_VAGINA) ||
+								tags.contains(ItemTag.PLUGS_NIPPLES) ||
+								tags.contains(ItemTag.SEALS_NIPPLES)
+							);
+				})
+				.map((clothingType) -> Main.game.getItemGen().generateClothing(clothingType, null, false))
+				.filter((clothing) -> target.isAbleToEquip(clothing, true, equipper))
+				.collect(Collectors.toList());
+		Set<AbstractClothing> clothingToAdd = new HashSet<>();
+
+		modifier += 1;
+		if (target.hasFetish(Fetish.FETISH_BONDAGE_VICTIM)) {
+			modifier += 2;
+		}
+		if (target.hasFetish(Fetish.FETISH_SUBMISSIVE)) {
+			modifier += 1;
+		}
+		if (hasFetish(Fetish.FETISH_DOMINANT)) {
+			modifier += 1;
+		}
+		ItemEffectType.CLOTHING.getPrimaryModifiers();
+		for (int i = 0; i < 10; i++) {
+			if (Util.random.nextInt(100) < 10 * modifier) {
+				AbstractClothing clothing = Util.randomItemFrom(clothings);
+				List<ItemEffect> effects = getBondageClothingEffects(clothing, modifier);
+				effects.forEach(clothing::addEffect);
+				clothingToAdd.add(clothing);
+			}
+		}
+		return clothingToAdd;
+	}
+
+	private List<ItemEffect> getBondageClothingEffects(AbstractClothing clothing, int chanceModifier) {
+		chanceModifier = Math.max(0, Math.min(5, chanceModifier));
+		int chanceModifierTen = chanceModifier * 10;
+
+		List<ItemEffect> effects = new ArrayList<>();
+
+		int roll = Util.random.nextInt(100);
+		TFPotency sealPotency;
+		if (roll < 5 + 5 * chanceModifier) {
+			sealPotency = TFPotency.MAJOR_DRAIN;
+		} else if (roll < 10 + chanceModifierTen) {
+			sealPotency = TFPotency.DRAIN;
+		} else if (roll < 20 * chanceModifier) {
+			sealPotency = TFPotency.MINOR_DRAIN;
+		} else {
+			sealPotency = TFPotency.MINOR_BOOST;
+		}
+		effects.add(new ItemEffect(ItemEffectType.CLOTHING, TFModifier.CLOTHING_SPECIAL, TFModifier.CLOTHING_SEALING, sealPotency, 0));
+
+		roll = Util.random.nextInt(100);
+		if (roll < chanceModifierTen) {
+			effects.add(new ItemEffect(ItemEffectType.CLOTHING, TFModifier.CLOTHING_SPECIAL, TFModifier.CLOTHING_SERVITUDE, TFPotency.MINOR_BOOST, 0));
+		}
+
+		if (allowVibrateOrDeny(clothing)) {
+			roll = Util.random.nextInt(100);
+			if (roll < 20 + chanceModifierTen) {
+				effects.add(new ItemEffect(ItemEffectType.CLOTHING, TFModifier.CLOTHING_SPECIAL, TFModifier.CLOTHING_VIBRATION, TFPotency.getRandomWeightedPositivePotency(), 0));
+			}
+			roll = Util.random.nextInt(100);
+			if (roll < 5 * chanceModifier) {
+				effects.add(new ItemEffect(ItemEffectType.CLOTHING, TFModifier.CLOTHING_SPECIAL, TFModifier.CLOTHING_ORGASM_PREVENTION, TFPotency.MINOR_BOOST, 0));
+			}
+		}
+
+		Map<TFModifier, TFModifier> bottomBehaviouralFetishList = new HashMap<>();
+		bottomBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_ANAL_RECEIVING, TFModifier.TF_MOD_FETISH_BODY_PART);
+		bottomBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_VAGINAL_RECEIVING, TFModifier.TF_MOD_FETISH_BODY_PART);
+		bottomBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_BREASTS_SELF, TFModifier.TF_MOD_FETISH_BODY_PART);
+		bottomBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_ORAL_GIVING, TFModifier.TF_MOD_FETISH_BODY_PART);
+		bottomBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_PENIS_RECEIVING, TFModifier.TF_MOD_FETISH_BODY_PART);
+		bottomBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_STRUTTER, TFModifier.TF_MOD_FETISH_BODY_PART);
+		bottomBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_ARMPIT_RECEIVING, TFModifier.TF_MOD_FETISH_BODY_PART);
+		bottomBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_FOOT_RECEIVING, TFModifier.TF_MOD_FETISH_BODY_PART);
+		bottomBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_LACTATION_SELF, TFModifier.TF_MOD_FETISH_BODY_PART);
+		bottomBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_BONDAGE_VICTIM, TFModifier.TF_MOD_FETISH_BEHAVIOUR);
+		bottomBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_SUBMISSIVE, TFModifier.TF_MOD_FETISH_BEHAVIOUR);
+		bottomBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_CUM_ADDICT, TFModifier.TF_MOD_FETISH_BEHAVIOUR);
+		bottomBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_PREGNANCY, TFModifier.TF_MOD_FETISH_BEHAVIOUR);
+		bottomBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_MASOCHIST, TFModifier.TF_MOD_FETISH_BEHAVIOUR);
+		bottomBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_NON_CON_SUB, TFModifier.TF_MOD_FETISH_BEHAVIOUR);
+		bottomBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_DENIAL_SELF, TFModifier.TF_MOD_FETISH_BEHAVIOUR);
+		bottomBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_EXHIBITIONIST, TFModifier.TF_MOD_FETISH_BEHAVIOUR);
+		bottomBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_KINK_RECEIVING, TFModifier.TF_MOD_FETISH_BEHAVIOUR);
+		bottomBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_MASTURBATION, TFModifier.TF_MOD_FETISH_BEHAVIOUR);
+		bottomBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_BIMBO, TFModifier.TF_MOD_FETISH_BEHAVIOUR);
+		bottomBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_SIZE_QUEEN, TFModifier.TF_MOD_FETISH_BEHAVIOUR);
+
+		Map<TFModifier, TFModifier> topBehaviouralFetishList = new HashMap<>();
+		topBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_ANAL_GIVING, TFModifier.TF_MOD_FETISH_BODY_PART);
+		topBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_VAGINAL_GIVING, TFModifier.TF_MOD_FETISH_BODY_PART);
+		topBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_BREASTS_OTHERS, TFModifier.TF_MOD_FETISH_BODY_PART);
+		topBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_ORAL_RECEIVING, TFModifier.TF_MOD_FETISH_BODY_PART);
+		topBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_PENIS_GIVING, TFModifier.TF_MOD_FETISH_BODY_PART);
+		topBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_LEG_LOVER, TFModifier.TF_MOD_FETISH_BODY_PART);
+		topBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_ARMPIT_GIVING, TFModifier.TF_MOD_FETISH_BODY_PART);
+		topBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_FOOT_GIVING, TFModifier.TF_MOD_FETISH_BODY_PART);
+		topBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_LACTATION_OTHERS, TFModifier.TF_MOD_FETISH_BODY_PART);
+		topBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_BONDAGE_APPLIER, TFModifier.TF_MOD_FETISH_BEHAVIOUR);
+		topBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_DOMINANT, TFModifier.TF_MOD_FETISH_BEHAVIOUR);
+		topBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_CUM_STUD, TFModifier.TF_MOD_FETISH_BEHAVIOUR);
+		topBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_DEFLOWERING, TFModifier.TF_MOD_FETISH_BEHAVIOUR);
+		topBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_DENIAL, TFModifier.TF_MOD_FETISH_BEHAVIOUR);
+		topBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_VOYEURIST, TFModifier.TF_MOD_FETISH_BEHAVIOUR);
+		topBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_IMPREGNATION, TFModifier.TF_MOD_FETISH_BEHAVIOUR);
+		topBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_NON_CON_DOM, TFModifier.TF_MOD_FETISH_BEHAVIOUR);
+		topBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_SADIST, TFModifier.TF_MOD_FETISH_BEHAVIOUR);
+		topBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_TRANSFORMATION_GIVING, TFModifier.TF_MOD_FETISH_BEHAVIOUR);
+		topBehaviouralFetishList.put(TFModifier.TF_MOD_FETISH_KINK_GIVING, TFModifier.TF_MOD_FETISH_BEHAVIOUR);
+
+		int counter = 0;
+		roll = Util.random.nextInt(100);
+		Set<TFModifier> chosenTFModifiers = new HashSet<>();
+		while (counter < chanceModifier + 1 && roll < chanceModifierTen) {
+			chosenTFModifiers.add(Util.randomItemFrom((Util.random.nextBoolean() ? bottomBehaviouralFetishList : topBehaviouralFetishList).keySet()));
+			counter++;
+			roll = Util.random.nextInt(100);
+		}
+		chosenTFModifiers.forEach((modifier) -> {
+			boolean bottom = bottomBehaviouralFetishList.keySet().contains(modifier);
+			TFPotency potency = bottom ? TFPotency.getRandomWeightedPositivePotency() : TFPotency.getRandomWeightedNegativePotency();
+			effects.add(new ItemEffect(ItemEffectType.CLOTHING, (bottom ? bottomBehaviouralFetishList : topBehaviouralFetishList).get(modifier), modifier, potency, 0));
+		});
+
+		counter = 0;
+
+		List<TFModifier> clothingMajorAttributeList = TFModifier.getClothingMajorAttributeList();
+		List<TFModifier> clothingAttributeList = TFModifier.getClothingAttributeList();
+		List<TFModifier> attributeModifierList = new ArrayList<>();
+		attributeModifierList.addAll(clothingMajorAttributeList);
+		attributeModifierList.addAll(clothingAttributeList);
+		do {
+			TFModifier modifier = Util.randomItemFrom(attributeModifierList);
+			TFPotency potency = modifier == TFModifier.CORRUPTION ||
+					modifier == TFModifier.FERTILITY ?
+					TFPotency.getRandomWeightedPositivePotency() :
+					TFPotency.getRandomWeightedNegativePotency();
+			boolean major = clothingMajorAttributeList.contains(modifier);
+			int effectCount = Util.random.nextInt(chanceModifier * 2);
+			for (int i = 0; i < effectCount; i++) {
+				effects.add(new ItemEffect(ItemEffectType.CLOTHING, major ? TFModifier.CLOTHING_MAJOR_ATTRIBUTE : TFModifier.CLOTHING_ATTRIBUTE, modifier, potency, 0));
+			}
+			counter++;
+			roll = Util.random.nextInt(100);
+		} while (counter < chanceModifier + 1 && roll < 30 + chanceModifierTen);
+
+		return effects;
+	}
+
+	private boolean allowVibrateOrDeny(AbstractClothing targetItem) {
+		return targetItem.getItemTags().contains(ItemTag.ENABLE_SEX_EQUIP) ||
+				!Collections.disjoint(
+						targetItem.getClothingType().getEquipSlots(),
+						Util.newArrayListOfValues(
+								InventorySlot.GROIN,
+								InventorySlot.VAGINA,
+								InventorySlot.PENIS,
+								InventorySlot.ANUS,
+								InventorySlot.NIPPLE,
+								InventorySlot.CHEST,
+								InventorySlot.PIERCING_NIPPLE,
+								InventorySlot.PIERCING_PENIS,
+								InventorySlot.PIERCING_VAGINA
+						)
+				);
+	}
+
 	public FetishPotion generateFetishPotion(GameCharacter target, Boolean pairedFetishesOnly) {
 		ItemEffect selectedEffect = null; // this will be the ultimately selected effect, or null if none available
-		String selectedEffectString ; // this will be a flavor text string paired with the effect
-		
+		String selectedEffectString; // this will be a flavor text string paired with the effect
+
 		List<PossibleItemEffect> possibleEffects = new ArrayList<>();
-		
+
 		AbstractItemType itemType = ItemType.FETISH_UNREFINED;
-		
+
 		Fetish currentTopFetish = null, currentBottomFetish = null;
 		TFModifier currentTopModifier = null, currentBottomModifier = null;
 		TFPotency currentTopPotency = null, currentBottomPotency = null, currentTopRemovePotency = null, currentBottomRemovePotency = null;;
@@ -2169,7 +2359,6 @@ public abstract class NPC extends GameCharacter implements XMLSaving {
 		pairedFetishMap.put(Fetish.FETISH_ORAL_RECEIVING, Fetish.FETISH_ORAL_GIVING);
 		pairedFetishMap.put(Fetish.FETISH_LEG_LOVER, Fetish.FETISH_STRUTTER);
 		pairedFetishMap.put(Fetish.FETISH_ARMPIT_GIVING, Fetish.FETISH_ARMPIT_RECEIVING);
-
 		pairedFetishMap.put(Fetish.FETISH_BONDAGE_APPLIER, Fetish.FETISH_BONDAGE_VICTIM);
 		pairedFetishMap.put(Fetish.FETISH_DOMINANT, Fetish.FETISH_SUBMISSIVE);
 		pairedFetishMap.put(Fetish.FETISH_CUM_STUD, Fetish.FETISH_CUM_ADDICT);

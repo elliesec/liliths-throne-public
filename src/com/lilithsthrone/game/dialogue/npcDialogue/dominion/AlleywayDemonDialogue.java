@@ -1,10 +1,13 @@
 package com.lilithsthrone.game.dialogue.npcDialogue.dominion;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import com.lilithsthrone.game.PropertyValue;
 import com.lilithsthrone.game.character.GameCharacter;
+import com.lilithsthrone.game.character.PlayerCharacter;
 import com.lilithsthrone.game.character.attributes.AffectionLevel;
 import com.lilithsthrone.game.character.attributes.CorruptionLevel;
 import com.lilithsthrone.game.character.body.CoverableArea;
@@ -22,6 +25,7 @@ import com.lilithsthrone.game.dialogue.responses.ResponseTag;
 import com.lilithsthrone.game.dialogue.utils.BodyChanging;
 import com.lilithsthrone.game.dialogue.utils.InventoryInteraction;
 import com.lilithsthrone.game.dialogue.utils.UtilText;
+import com.lilithsthrone.game.inventory.clothing.AbstractClothing;
 import com.lilithsthrone.game.inventory.item.FetishPotion;
 import com.lilithsthrone.game.inventory.item.TransformativePotion;
 import com.lilithsthrone.game.occupantManagement.OccupancyUtil;
@@ -1831,6 +1835,10 @@ public class AlleywayDemonDialogue {
 	};
 	
 	public static final DialogueNode AFTER_SEX_DEFEAT = new DialogueNode("Collapse", "", true) {
+		Set<AbstractClothing> bondageClothingList = Collections.emptySet();
+		Set<AbstractClothing> companionBondageClothingList = Collections.emptySet();
+		StringBuilder bondageClothingDialogue = new StringBuilder();
+
 		@Override
 		public int getSecondsPassed() {
 			return 15*60;
@@ -1860,6 +1868,55 @@ public class AlleywayDemonDialogue {
 				};
 			}
 			return null;
+		}
+		@Override
+		public void applyPreParsingEffects() {
+			bondageClothingDialogue = new StringBuilder();
+			PlayerCharacter player = Main.game.getPlayer();
+			bondageClothingList = getDemon().generateBondageApplierClothing(player, getDemon(), 3);
+			if (isCompanionDialogue()) {
+				companionBondageClothingList = getDemon().generateBondageApplierClothing(getMainCompanion(), getDemon(), 3);
+			}
+			List<String> playerEquipText = new ArrayList<>();
+			if (bondageClothingList.size() > 0) {
+				bondageClothingList.forEach((clothing) -> {
+					if (player.isAbleToEquip(clothing, true, getDemon())) {
+						playerEquipText.add(player.equipClothingFromNowhere(clothing, true, getDemon()));
+					}
+				});
+				if (playerEquipText.size() > 0) {
+					bondageClothingDialogue.append("<p>")
+							.append("Looking down at you, [npc.name] smirks. [npc.speech(Before I go, I've got a present for you to remember me by.)] Exhausted, you're unable to resist as [npc.name] bears down on you with a handful of items.")
+							.append("</p>");
+					playerEquipText.forEach((text) -> bondageClothingDialogue.append("<p>")
+							.append(text)
+							.append("</p>"));
+				}
+			}
+			if (companionBondageClothingList.size() > 0) {
+				List<String> equipText = new ArrayList<>();
+				companionBondageClothingList.forEach((clothing) -> {
+					if (getMainCompanion().isAbleToEquip(clothing, true, getDemon())) {
+						equipText.add(getMainCompanion().equipClothingFromNowhere(clothing, true, getDemon()));
+					}
+				});
+				if (equipText.size() > 0) {
+					if (playerEquipText.size() > 0) {
+						bondageClothingDialogue.append("<p>")
+								.append("[npc.name] looks over to [com.name] and grins. [npc.speech(Don't worry, I've got something for you as well!)] [npc.she] quickly repeats the process with [com.name] before stepping back to admire her handywork.")
+								.append("</p>");
+					} else {
+						bondageClothingDialogue.append("<p>")
+								.append("Looking over at [com.name], [npc.name] smirks. [npc.speech(Before I go, I've got a present for you to remember me by.)] Exhausted, [com.name] is unable to resist as [npc.name] bears down on her with a handful of items.")
+								.append("</p>");
+					}
+					equipText.forEach((text) -> bondageClothingDialogue.append("<p>")
+							.append(text)
+							.append("</p>"));
+				}
+			}
+
+			super.applyPreParsingEffects();
 		}
 	};
 	

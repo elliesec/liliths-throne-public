@@ -1,15 +1,5 @@
 package com.lilithsthrone.game.character.npc.dominion;
 
-import java.time.Month;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import com.lilithsthrone.game.character.CharacterImportSetting;
 import com.lilithsthrone.game.character.EquipClothingSetting;
 import com.lilithsthrone.game.character.body.coverings.BodyCoveringType;
@@ -43,6 +33,11 @@ import com.lilithsthrone.world.Weather;
 import com.lilithsthrone.world.WorldType;
 import com.lilithsthrone.world.places.AbstractPlaceType;
 import com.lilithsthrone.world.places.PlaceType;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import java.time.Month;
+import java.util.*;
 
 /**
  * @since 0.1.66
@@ -83,8 +78,8 @@ public class DominionAlleywayAttacker extends NPC {
 				canalSpecies = true;
 			}
 			
-			// Set random level from 1 to 3:
-			setLevel(Util.random.nextInt(3) + 1);
+			// Set random level from 1 to 5:
+			setLevel(Util.random.nextInt(5) + 1);
 			
 			// RACE & NAME:
 			
@@ -144,7 +139,7 @@ public class DominionAlleywayAttacker extends NPC {
 			// ADDING FETISHES:
 			
 			Main.game.getCharacterUtils().addFetishes(this);
-			
+
 			// BODY RANDOMISATION:
 			
 			Main.game.getCharacterUtils().randomiseBody(this, true);

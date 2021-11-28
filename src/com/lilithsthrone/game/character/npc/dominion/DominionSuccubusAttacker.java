@@ -4,6 +4,10 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.lilithsthrone.game.character.body.valueEnums.FluidFlavour;
+import com.lilithsthrone.game.character.body.valueEnums.FluidModifier;
+import com.lilithsthrone.game.character.effects.Perk;
+import com.lilithsthrone.game.character.effects.PerkManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -76,6 +80,15 @@ public class DominionSuccubusAttacker extends NPC {
 			
 			addFetish(Fetish.FETISH_DEFLOWERING);
 			addFetish(Fetish.FETISH_DOMINANT);
+			if (Util.random.nextInt(100) < 75) {
+				addFetish(Fetish.FETISH_BONDAGE_APPLIER);
+			}
+			if (Util.random.nextBoolean()) {
+				addFetish(Fetish.FETISH_CUM_STUD);
+			}
+			if (Util.random.nextBoolean()) {
+				addFetish(Fetish.FETISH_ORAL_RECEIVING);
+			}
 			Main.game.getCharacterUtils().addFetishes(this);
 
 			this.removePersonalityTrait(PersonalityTrait.PRUDE);
@@ -89,8 +102,30 @@ public class DominionSuccubusAttacker extends NPC {
 			this.setFaceVirgin(false);
 			this.setNippleVirgin(false);
 			this.setPenisVirgin(false);
-			
-			setLevel(Util.random.nextInt(5) + 4);
+			this.setCumFlavour(Util.randomItemFrom(FluidFlavour.values()));
+			this.setGirlcumFlavour(Util.randomItemFrom(FluidFlavour.values()));
+			int roll = Util.random.nextInt(100);
+			int threshold = 80;
+			while (roll < threshold) {
+				FluidModifier cumModifier = Util.randomItemFrom(FluidModifier.values());
+				if (!this.getCumModifiers().contains(cumModifier)) {
+					this.addCumModifier(cumModifier);
+				}
+				threshold -= 10;
+				roll = Util.random.nextInt(100);
+			}
+			roll = Util.random.nextInt(100);
+			threshold = 80;
+			while (roll < threshold) {
+				FluidModifier cumModifier = Util.randomItemFrom(FluidModifier.values());
+				if (!this.getGirlcum().getFluidModifiers().contains(cumModifier)) {
+					this.addGirlcumModifier(cumModifier);
+				}
+				threshold -= 10;
+				roll = Util.random.nextInt(100);
+			}
+
+			setLevel(Util.random.nextInt(10) + 6);
 			
 			setName(Name.getRandomTriplet(Race.DEMON));
 			this.setPlayerKnowsName(false);
@@ -112,6 +147,9 @@ public class DominionSuccubusAttacker extends NPC {
 
 			// Set starting perks based on the character's race
 			initPerkTreeAndBackgroundPerks();
+			if (Util.random.nextInt(100) < 25) {
+				PerkManager.initialisePerks(this, true, Util.newArrayListOfValues(Perk.ORGASMIC_LEVEL_DRAIN));
+			}
 			this.setStartingCombatMoves();
 			loadImages();
 			
@@ -176,7 +214,22 @@ public class DominionSuccubusAttacker extends NPC {
 	@Override
 	public void changeFurryLevel(){
 	}
-	
+
+	@Override
+	public int getLootMoney() {
+		return (int) ((getLevel() * 100) * (1 + Math.random() - 0.5f));
+	}
+
+	@Override
+	public int getOrgasmsBeforeSatisfied() {
+		return (int) (super.getOrgasmsBeforeSatisfied() * (1 + Math.random()));
+	}
+
+	@Override
+	public int getEscapeChance() {
+		return (int) (super.getEscapeChance() * (1 + Math.random()));
+	}
+
 	@Override
 	public DialogueNode getEncounterDialogue() {
 		return AlleywayDemonDialogue.DEMON_ATTACK;

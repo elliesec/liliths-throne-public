@@ -1835,10 +1835,14 @@
 	
 	<!-- AFTER_SEX_DEFEAT -->
 	
-	<htmlContent tag="AFTER_SEX_DEFEAT"><![CDATA[
+	<htmlContent tag="AFTER_SEX_DEFEAT_1"><![CDATA[
 	<p>
 		As [npc.name] steps back and sorts [npc.her] clothes out, you sink to the floor, totally worn out from [npc.her] dominant treatment of you. [npc.She] looks down at you, and you glance up to see a very satisfied smile cross [npc.her] face. [npc.She] leans down and pats you on the head. [npc.speech(We should do this again some time!)]
 	</p>
+	]]>
+	</htmlContent>
+
+	<htmlContent tag="AFTER_SEX_DEFEAT_2"><![CDATA[
 	<p>
 		With that, [npc.she] walks off, leaving you panting on the ground. It takes a little while for you to recover from your ordeal, but eventually you feel strong enough to get your things in order and carry on your way.
 	</p>
