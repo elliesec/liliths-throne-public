@@ -995,7 +995,7 @@ public class Lab {
 					cost += clothing.getJinxRemovalCost(Main.game.getPlayer(), true);
 				}
 			}
-			cost *= 10;
+			cost *= 20;
 			Main.game.getDialogueFlags().setSavedLong("JINX_REMOVAL_COST", cost);
 			super.applyPreParsingEffects();
 		}
