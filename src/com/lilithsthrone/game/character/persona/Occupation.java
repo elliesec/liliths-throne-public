@@ -134,6 +134,7 @@ public enum Occupation {
 	NPC_FITNESS_INSTRUCTOR(Perk.JOB_MISC, "fitness instructor", "-", OccupationTag.HAS_PREREQUISITES),
 	
 	NPC_MUGGER(Perk.JOB_MUGGER, "mugger", "[npc.NameIsFull] a mugger, and [npc.verb(make)] a living by stealing other people's possessions.", OccupationTag.LOWLIFE),
+	NPC_SEX_PREDATOR(Perk.JOB_SEX_PREDATOR, "sexual predator", "[npx.NameIsFull] a sexual predator, preying on unsuspecting victims that fall into their traps.", OccupationTag.LOWLIFE),
 
 	NPC_BOUNTY_HUNTER(Perk.JOB_BOUNTY_HUNTER, "bounty hunter", "[npc.NameIsFull] a bounty hunter, who earns a wage by tracking down and capturing wanted criminals.", OccupationTag.HAS_PREREQUISITES),
 	

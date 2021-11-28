@@ -9,6 +9,7 @@ import com.lilithsthrone.game.character.body.valueEnums.FluidModifier;
 import com.lilithsthrone.game.character.effects.AbstractPerk;
 import com.lilithsthrone.game.character.effects.Perk;
 import com.lilithsthrone.game.character.effects.PerkManager;
+import com.lilithsthrone.game.character.persona.Occupation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -156,10 +157,11 @@ public class DominionSuccubusAttacker extends NPC {
 			if (Util.random.nextInt(100) < 5) { perks.add(Perk.CHUUNI); }
 			if (Util.random.nextInt(100) < 40) { perks.add(Perk.PHYSIQUE_BOOST_MAJOR); }
 			if (Util.random.nextInt(100) < 40) { perks.add(Perk.SEDUCTION_BOOST_MAJOR); }
-			if (Util.random.nextInt(100) < 40) { perks.add(Perk.SEDUCTION_BOOST_MAJOR); }
 			if (Util.random.nextInt(100) < 40) { perks.add(Perk.ARCANE_BOOST_MAJOR); }
-
 			PerkManager.initialisePerks(this, true, perks);
+
+			this.setHistory(Occupation.NPC_SEX_PREDATOR);
+
 			this.setStartingCombatMoves();
 			loadImages();
 			

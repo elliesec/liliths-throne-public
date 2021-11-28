@@ -935,6 +935,30 @@ public class Perk {
 			return UtilText.parse(owner, "[npc.Name] [npc.verb(live)] a life of crime, stealing from the rich and poor alike.");
 		}
 	};
+
+	public static AbstractPerk JOB_SEX_PREDATOR = new AbstractPerk(20,
+			true,
+			"Sexual Predator",
+			PerkCategory.JOB,
+			"perks/jobs/sex_predator",
+			PresetColour.BASE_RED_DARK,
+			Util.newHashMapOfValues(
+					new Value<>(Attribute.HEALTH_MAXIMUM, 20),
+					new Value<>(Attribute.MAJOR_CORRUPTION, 10),
+					new Value<>(Attribute.MAJOR_ARCANE, 5),
+					new Value<>(Attribute.DAMAGE_LUST, 15),
+					new Value<>(Attribute.RESISTANCE_LUST, 20),
+					new Value<>(Attribute.RESISTANCE_PHYSICAL, 5),
+					new Value<>(Attribute.ENERGY_SHIELDING, 5),
+					new Value<>(Attribute.ENCHANTMENT_LIMIT, 20)
+			),
+			Util.newArrayListOfValues("[style.boldExcellent(-25%)] chance of enemy escape")
+		) {
+		@Override
+		public String getDescription(GameCharacter target) {
+			return null;
+		}
+	};
 	
 	public static AbstractPerk JOB_BOUNTY_HUNTER = new AbstractPerk(20,
 			true,
