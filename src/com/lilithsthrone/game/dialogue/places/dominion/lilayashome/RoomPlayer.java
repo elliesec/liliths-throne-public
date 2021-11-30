@@ -1204,32 +1204,16 @@ public class RoomPlayer {
 		return charactersPresent;
 	}
 	
-	private static List<GameCharacter> slavesWantingToSexPlayer(int hour) {
-		List<GameCharacter> charactersPresent = new ArrayList<>();
-		
-		for(String slaveId : Main.game.getPlayer().getSlavesOwned()) {
-			try {
-				GameCharacter slave = Main.game.getNPCById(slaveId);
-				if(slave.getSlaveJob(hour)==SlaveJob.BEDROOM && slave.mightFuckPlayerAsSlave()) {
-					charactersPresent.add(slave);
-				}
-				
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return charactersPresent;
-	}
-	
 //	private static int getHourPlusSleep() {
 //		return (Main.game.getHourOfDay() + (sleepTimeInMinutes/60))%24;
 //	}
 	
 	public static final DialogueNode AUNT_HOME_PLAYERS_ROOM_SLEEP = new DialogueNode("Your Room", "", false) {
+		private List<GameCharacter> slavesWantingToSexPlayer;
 
 		@Override
 		public boolean isTravelDisabled() {
-			return !slavesWantingToSexPlayer(Main.game.getHourOfDay()).isEmpty();
+			return !getSlavesWantingToSexPlayer().isEmpty();
 		}
 		
 		@Override
@@ -1440,7 +1424,7 @@ public class RoomPlayer {
 					morningString = "afternoon";
 				}
 
-				List<GameCharacter> hornySlaves = slavesWantingToSexPlayer(Main.game.getHourOfDay());
+				List<GameCharacter> hornySlaves = getSlavesWantingToSexPlayer();
 				
 				if(!slavesToWakePlayer.isEmpty()) {
 					GameCharacter slaveWaking = Util.randomItemFrom(slavesToWakePlayer);
@@ -1571,7 +1555,7 @@ public class RoomPlayer {
 					+ "</p>");
 			}
 			
-			if(!slavesWantingToSexPlayer(Main.game.getHourOfDay()).isEmpty()) {
+			if(!getSlavesWantingToSexPlayer().isEmpty()) {
 				sb.append("<p style='text-align:center;'>"
 							+ "[style.italicsGood(You feel completely refreshed!)]"
 						+ "</p>");
@@ -1582,7 +1566,7 @@ public class RoomPlayer {
 
 		@Override
 		public String getResponseTabTitle(int index) {
-			if(!slavesWantingToSexPlayer(Main.game.getHourOfDay()).isEmpty()) {
+			if(!getSlavesWantingToSexPlayer().isEmpty()) {
 				return null;
 			}
 			return LilayaHomeGeneric.getLilayasHouseStandardResponseTabs(index);
@@ -1590,7 +1574,7 @@ public class RoomPlayer {
 		
 		@Override
 		public Response getResponse(int responseTab, int index) {
-			List<GameCharacter> hornySlaves = slavesWantingToSexPlayer(Main.game.getHourOfDay());
+			List<GameCharacter> hornySlaves = getSlavesWantingToSexPlayer();
 			if(!hornySlaves.isEmpty()) {
 				if(index==1) {
 					boolean soloSex = hornySlaves.size()==1;
@@ -1632,6 +1616,33 @@ public class RoomPlayer {
 		@Override
 		public boolean isInventoryDisabled() {
 			return false;
+		}
+
+		@Override
+		public void applyPreParsingEffects() {
+			slavesWantingToSexPlayer = null;
+			getSlavesWantingToSexPlayer();
+		}
+
+		private List<GameCharacter> getSlavesWantingToSexPlayer() {
+			int hour = Main.game.getHourOfDay();
+			if (slavesWantingToSexPlayer == null) {
+				slavesWantingToSexPlayer = new ArrayList<>();
+
+				for (String slaveId : Main.game.getPlayer().getSlavesOwned()) {
+					try {
+						GameCharacter slave = Main.game.getNPCById(slaveId);
+						if (slave.getSlaveJob(hour) == SlaveJob.BEDROOM && Util.random.nextInt(100) < slave.getChanceToFuckPlayerAsSlave()) {
+							slavesWantingToSexPlayer.add(slave);
+						}
+
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+
+			return slavesWantingToSexPlayer;
 		}
 	};
 	

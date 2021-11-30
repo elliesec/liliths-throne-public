@@ -211,7 +211,7 @@ public abstract class AbstractEncounter {
 						&& slave.getLocationPlace().getPlaceType() != PlaceType.SLAVER_ALLEY_SLAVERY_ADMINISTRATION
 						&& slave.hasSlavePermissionSetting(SlavePermissionSetting.GENERAL_OUTSIDE_FREEDOM)
 						&& (!Main.game.getPlayer().getLocationPlace().getPlaceType().isPopulated() || slave.hasFetish(Fetish.FETISH_EXHIBITIONIST))
-						&& slave.mightFuckPlayerAsSlave()
+						&& Util.random.nextInt(100) < slave.getChanceToFuckPlayerAsSlave()
 				) {
 					if (slave.getLastTimeHadSex() + 60 * 4 < Main.game.getMinutesPassed()) {
 						slaves.add(slave);

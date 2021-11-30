@@ -1806,7 +1806,8 @@ public class LilayaSpa {
 				final GameCharacter slave = slavesForMassage.get(index - 1);
 				final boolean slaveDominant = slave.hasFetish(Fetish.FETISH_DOMINANT);
 				final boolean slaveDisobedient = slave.getObedienceValue() < ObedienceLevelBasic.DISOBEDIENT.getMaximumValue();
-				final boolean slaveMightFuckPlayer = slave.mightFuckPlayerAsSlave();
+				final int chanceToFuckPlayer = slave.getChanceToFuckPlayerAsSlave();
+				final boolean slaveMightFuckPlayer = chanceToFuckPlayer > 0;
 				String extraText = slaveMightFuckPlayer
 						? slave.hasStatusEffect(StatusEffect.PENT_UP_SLAVE)
 						? "<br/>[style.italicsSex(As [npc.name] is currently pent up, [npc.she] is certain to start fucking you during the massage!)]"
@@ -1829,7 +1830,7 @@ public class LilayaSpa {
 					public void effects() {
 						massageSlave = slave;
 						if(slaveMightFuckPlayer) {
-							massageSlaveSex = slave.hasStatusEffect(StatusEffect.PENT_UP_SLAVE) || Math.random()<0.5f;
+							massageSlaveSex = Util.random.nextInt(100) < chanceToFuckPlayer;
 						} else {
 							massageSlaveSex = false;
 						}

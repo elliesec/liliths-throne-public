@@ -4485,14 +4485,28 @@ public abstract class GameCharacter implements XMLSaving {
 		return (Math.round(totalObedienceChange*100)/100f) * (this.isSlave() && this.getOwner().hasTrait(Perk.JOB_TEACHER, true)?3:1);
 	}
 
-    public boolean mightFuckPlayerAsSlave() {
+    public int getChanceToFuckPlayerAsSlave() {
         final PlayerCharacter player = Main.game.getPlayer();
-        return this.isAttractedTo(player)
-            && (player.hasFetish(Fetish.FETISH_SUBMISSIVE) || !player.hasFetish(Fetish.FETISH_DOMINANT) || player.getLevel() + 5 < this.getLevel())
-            && (this.hasStatusEffect(StatusEffect.PENT_UP_SLAVE)
-                || this.hasFetish(Fetish.FETISH_DOMINANT)
-                || this.getObedienceBasic() == ObedienceLevelBasic.DISOBEDIENT
-        );
+        if (player.hasFetish(Fetish.FETISH_DOMINANT)) {
+            return 0;
+        }
+        double chance = 0;
+        if (player.hasFetish(Fetish.FETISH_SUBMISSIVE)) {
+            chance += 10;
+        }
+        if (this.hasFetish(Fetish.FETISH_DOMINANT)) {
+            chance += 10;
+        }
+        if (this.hasStatusEffect(StatusEffect.PENT_UP_SLAVE)) {
+            chance *= 2;
+        }
+        if (this.getLevel() > player.getLevel()) {
+            chance *= (1 + (this.getLevel() - player.getLevel()) * 0.05);
+        }
+        if (this.getObedienceValue() < 0) {
+            chance *= (1 - this.getObedienceValue() * 0.01);
+        }
+        return (int) Math.round(Math.min(100, chance));
     }
 
 	public int getTotalSlavesWorkingJob(SlaveJob job) {
@@ -7298,7 +7312,7 @@ public abstract class GameCharacter implements XMLSaving {
 				if(this.getSubspecies().equals(Subspecies.IMP) || this.getSubspecies().equals(Subspecies.IMP_ALPHA)) {
 					return 1+increment;
 				}
-				return 3+increment;
+				return 2 + increment + Util.random.nextInt(4);
 			}
 		}
 		

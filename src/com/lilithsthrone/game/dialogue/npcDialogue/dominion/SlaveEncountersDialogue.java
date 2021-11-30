@@ -1,10 +1,11 @@
 package com.lilithsthrone.game.dialogue.npcDialogue.dominion;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.lilithsthrone.game.character.GameCharacter;
+import com.lilithsthrone.game.character.PlayerCharacter;
 import com.lilithsthrone.game.character.body.CoverableArea;
+import com.lilithsthrone.game.character.fetishes.Fetish;
 import com.lilithsthrone.game.character.npc.NPC;
 import com.lilithsthrone.game.dialogue.DialogueNode;
 import com.lilithsthrone.game.dialogue.eventLog.SlaveryEventLogEntry;
@@ -12,6 +13,7 @@ import com.lilithsthrone.game.dialogue.responses.Response;
 import com.lilithsthrone.game.dialogue.responses.ResponseSex;
 import com.lilithsthrone.game.dialogue.responses.ResponseTag;
 import com.lilithsthrone.game.dialogue.utils.UtilText;
+import com.lilithsthrone.game.inventory.clothing.AbstractClothing;
 import com.lilithsthrone.game.occupantManagement.OccupancyUtil;
 import com.lilithsthrone.game.occupantManagement.slave.SlaveJob;
 import com.lilithsthrone.game.occupantManagement.slave.SlavePermissionSetting;
@@ -159,17 +161,20 @@ public class SlaveEncountersDialogue {
 	};
 	
 	public static final DialogueNode SLAVE_USES_YOU_POST_SEX = new DialogueNode("Used", "", true) {
+		private StringBuilder bondageClothingDialogue = new StringBuilder();
 		@Override
 		public String getDescription(){
 			return UtilText.parse(slave, "Now that [npc.sheHas] had [npc.her] fun, [npc.name] starts to step back...");
 		}
 		@Override
 		public String getContent() {
-			return UtilText.parseFromXMLFile("encounters/dominion/slaveEncounters", "SLAVE_USES_YOU_POST_SEX", slave);
+			String content1 = UtilText.parseFromXMLFile("encounters/dominion/slaveEncounters", "SLAVE_USES_YOU_POST_SEX_1", slave);
+			String content2 = UtilText.parseFromXMLFile("encounters/dominion/slaveEncounters", "SLAVE_USES_YOU_POST_SEX_2", slave);
+			return content1 + bondageClothingDialogue.toString() + content2;
 		}
 		@Override
 		public Response getResponse(int responseTab, int index) {
-			if(index == 1) {
+			if (index == 1) {
 				return new Response("Continue", "Continue on your way.", Main.game.getDefaultDialogue(false)) {
 					@Override
 					public void effects() {
@@ -178,6 +183,54 @@ public class SlaveEncountersDialogue {
 				};
 			}
 			return null;
+		}
+
+		@Override
+		public void applyPreParsingEffects() {
+			final PlayerCharacter player = Main.game.getPlayer();
+			final NPC slave = getSlave();
+
+			int chance = 0;
+			if (player.hasFetish(Fetish.FETISH_SUBMISSIVE)) {
+				chance += 25;
+			}
+			if (player.hasFetish(Fetish.FETISH_BONDAGE_VICTIM)) {
+				chance += 25;
+			}
+			if (slave.hasFetish(Fetish.FETISH_DOMINANT)) {
+				chance += 25;
+			}
+			if (slave.hasFetish(Fetish.FETISH_BONDAGE_APPLIER)) {
+				chance += 25;
+			}
+			if (Util.random.nextInt(100) >= chance) {
+				return;
+			}
+
+			bondageClothingDialogue = new StringBuilder();
+			final Set<AbstractClothing> playerBondageClothing = slave.generateBondageApplierClothing(player, slave, 1);
+
+			List<String> playerEquipText = new ArrayList<>();
+			if (playerBondageClothing.size() > 0) {
+				playerBondageClothing.forEach((clothing) -> {
+					if (player.isAbleToEquip(clothing, true, slave)) {
+						playerEquipText.add(player.equipClothingFromNowhere(clothing, true, slave));
+					}
+				});
+				if (playerEquipText.size() > 0) {
+					bondageClothingDialogue.append("<p>")
+							.append("[npc.Name] suddenly grins. [npc.speech(Oh, I almost forgot! I was out shopping the other day and got you a present.)]")
+							.append("[npc.She] quickly runs off, but before you can compose yourself enough to leave, [npc.she] returns with a shopping bag and quickly pins you down again to give you your 'gift'.")
+							.append("</p>");
+					playerEquipText.forEach((text) -> bondageClothingDialogue.append("<p>")
+							.append(text)
+							.append("</p>"));
+					bondageClothingDialogue.append("<p>")
+							.append("[npc.Name] steps back to admire her handiwork and flashes you a predatory smile.")
+							.append("[npc.speech(I knew it would look good on you!)]")
+							.append("</p>");
+				}
+			}
 		}
 	};
 	

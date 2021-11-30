@@ -81,7 +81,7 @@ public class Encounter {
 						NPC slave = (NPC) Main.game.getNPCById(id);
 						if (slave.getSlaveJob(Main.game.getHourOfDay()) == SlaveJob.IDLE
 								&& slave.hasSlavePermissionSetting(SlavePermissionSetting.GENERAL_HOUSE_FREEDOM)
-								&& slave.mightFuckPlayerAsSlave()
+								&& Util.random.nextInt(100) < slave.getChanceToFuckPlayerAsSlave()
 						) {
 							if (slave.getLastTimeHadSex() + 60 * 4 < Main.game.getMinutesPassed()) {
 								slaves.add(slave);

@@ -42,16 +42,20 @@
 	
 	<!-- SLAVE_USES_YOU_POST_SEX -->
 	
-	<htmlContent tag="SLAVE_USES_YOU_POST_SEX"><![CDATA[
+	<htmlContent tag="SLAVE_USES_YOU_POST_SEX_1"><![CDATA[
 	<p>
 		As [npc.name] steps back and sorts [npc.her] clothes out, you sink to the floor, totally worn out from [npc.her] dominant treatment of you.  [npc.She] looks down at you with a very satisfied smirk on [npc.her] face, before sneering, [npc.speech(That was fun, <i>[npc.pcName]</i>!)]
 	</p>
+	]]>
+	</htmlContent>
+
+	<htmlContent tag="SLAVE_USES_YOU_POST_SEX_2"><![CDATA[
 	<p>
 		With that, [npc.she] walks off, leaving you panting on the floor. It takes a little while for you to recover from your ordeal, but eventually you feel strong enough to get your things in order and carry on your way.
 	</p>
 	]]>
 	</htmlContent>
-	
+
 	
 	<!-- SLAVE_USES_YOU_STREETS -->
 	
