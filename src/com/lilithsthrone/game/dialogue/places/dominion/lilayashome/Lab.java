@@ -995,7 +995,10 @@ public class Lab {
 					cost += clothing.getJinxRemovalCost(Main.game.getPlayer(), true);
 				}
 			}
-			cost *= 20;
+			cost *= 100;
+			if (Main.game.getPlayer().hasFetish(Fetish.FETISH_BONDAGE_VICTIM)) {
+				cost *= 10;
+			}
 			Main.game.getDialogueFlags().setSavedLong("JINX_REMOVAL_COST", cost);
 			super.applyPreParsingEffects();
 		}

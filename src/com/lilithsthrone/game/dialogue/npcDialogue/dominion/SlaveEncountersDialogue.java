@@ -232,6 +232,7 @@ public class SlaveEncountersDialogue {
 							.append("</p>");
 
 					bondageClothingDialogue.append(slave.developFetish(Fetish.FETISH_BONDAGE_APPLIER));
+					bondageClothingDialogue.append(player.developFetish(Fetish.FETISH_BONDAGE_VICTIM));
 				}
 			}
 		}

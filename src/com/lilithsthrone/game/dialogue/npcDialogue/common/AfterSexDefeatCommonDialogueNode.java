@@ -139,6 +139,7 @@ public class AfterSexDefeatCommonDialogueNode extends DialogueNode {
 
         if ((playerBondageClothing.size() > 0 || companionBondageClothing.size() > 0)) {
             bondageClothingDialogue.append(attacker.developFetish(Fetish.FETISH_BONDAGE_APPLIER));
+            bondageClothingDialogue.append(player.developFetish(Fetish.FETISH_BONDAGE_VICTIM));
         }
 
         super.applyPreParsingEffects();
