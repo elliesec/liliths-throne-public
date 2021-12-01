@@ -7330,7 +7330,7 @@ public abstract class GameCharacter implements XMLSaving {
 				if(this.getSubspecies().equals(Subspecies.IMP) || this.getSubspecies().equals(Subspecies.IMP_ALPHA)) {
 					return 1+increment;
 				}
-				return 2 + increment + Util.random.nextInt(4);
+				return 2 + (this.getLevel() / 10) + increment + Util.random.nextInt(4);
 			}
 		}
 		
