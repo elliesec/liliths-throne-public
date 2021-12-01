@@ -6797,7 +6797,25 @@ public abstract class GameCharacter implements XMLSaving {
 	public FetishLevel getFetishLevel(Fetish fetish) {
 		return FetishLevel.getFetishLevelFromValue(getFetishExperience(fetish));
 	}
-	
+
+    public String developFetish(Fetish fetish) {
+        this.incrementFetishExperience(Fetish.FETISH_BONDAGE_APPLIER, Fetish.FETISH_BONDAGE_APPLIER.getExperienceGainFromSexAction());
+        if (Util.random.nextInt(100) < 25) {
+            FetishDesire currentDesire = this.getFetishDesire(Fetish.FETISH_BONDAGE_APPLIER);
+            if (currentDesire == FetishDesire.FOUR_LOVE && !this.hasFetish(Fetish.FETISH_BONDAGE_APPLIER)) {
+                return new StringBuilder("<p>")
+                        .append(this.addFetish(Fetish.FETISH_BONDAGE_APPLIER, true))
+                        .append("</p>")
+                        .toString();
+            } else {
+                return new StringBuilder("<p>")
+                        .append(this.setFetishDesire(Fetish.FETISH_BONDAGE_APPLIER, currentDesire.getNextDesire()))
+                        .append("</p>")
+                        .toString();
+            }
+        }
+        return "";
+    }
 
 	// Status effects:
 

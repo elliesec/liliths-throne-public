@@ -2,6 +2,8 @@ package com.lilithsthrone.game.dialogue.npcDialogue.common;
 
 import com.lilithsthrone.game.character.GameCharacter;
 import com.lilithsthrone.game.character.PlayerCharacter;
+import com.lilithsthrone.game.character.fetishes.Fetish;
+import com.lilithsthrone.game.character.fetishes.FetishDesire;
 import com.lilithsthrone.game.character.npc.NPC;
 import com.lilithsthrone.game.character.npc.NPCFlagValue;
 import com.lilithsthrone.game.dialogue.DialogueNode;
@@ -9,6 +11,7 @@ import com.lilithsthrone.game.dialogue.responses.Response;
 import com.lilithsthrone.game.dialogue.utils.UtilText;
 import com.lilithsthrone.game.inventory.clothing.AbstractClothing;
 import com.lilithsthrone.main.Main;
+import com.lilithsthrone.utils.Util;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -132,6 +135,10 @@ public class AfterSexDefeatCommonDialogueNode extends DialogueNode {
                         .append(text)
                         .append("</p>"));
             }
+        }
+
+        if ((playerBondageClothing.size() > 0 || companionBondageClothing.size() > 0)) {
+            bondageClothingDialogue.append(attacker.developFetish(Fetish.FETISH_BONDAGE_APPLIER));
         }
 
         super.applyPreParsingEffects();

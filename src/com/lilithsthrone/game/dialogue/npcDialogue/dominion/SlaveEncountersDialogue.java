@@ -6,6 +6,7 @@ import com.lilithsthrone.game.character.GameCharacter;
 import com.lilithsthrone.game.character.PlayerCharacter;
 import com.lilithsthrone.game.character.body.CoverableArea;
 import com.lilithsthrone.game.character.fetishes.Fetish;
+import com.lilithsthrone.game.character.fetishes.FetishDesire;
 import com.lilithsthrone.game.character.npc.NPC;
 import com.lilithsthrone.game.dialogue.DialogueNode;
 import com.lilithsthrone.game.dialogue.eventLog.SlaveryEventLogEntry;
@@ -229,6 +230,8 @@ public class SlaveEncountersDialogue {
 							.append("[npc.Name] steps back to admire her handiwork and flashes you a predatory smile.")
 							.append("[npc.speech(I knew it would look good on you!)]")
 							.append("</p>");
+
+					bondageClothingDialogue.append(slave.developFetish(Fetish.FETISH_BONDAGE_APPLIER));
 				}
 			}
 		}

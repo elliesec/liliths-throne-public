@@ -29,6 +29,7 @@ import com.lilithsthrone.game.inventory.Rarity;
 import com.lilithsthrone.game.inventory.clothing.AbstractClothing;
 import com.lilithsthrone.game.inventory.clothing.AbstractClothingType;
 import com.lilithsthrone.game.inventory.clothing.ClothingType;
+import com.lilithsthrone.game.inventory.enchanting.ItemEffect;
 import com.lilithsthrone.game.inventory.item.AbstractItem;
 import com.lilithsthrone.game.inventory.item.ItemType;
 import com.lilithsthrone.game.inventory.weapon.AbstractWeapon;
@@ -398,7 +399,15 @@ public class Encounter {
 							|| clothing.getDefaultItemTags().contains(ItemTag.NO_RANDOM_SPAWN)
 							|| clothing.getRarity()==Rarity.EPIC
 							|| clothing.getRarity()==Rarity.LEGENDARY);
-					randomItem = Main.game.getItemGen().generateClothing(randomClothingList.get(Util.random.nextInt(randomClothingList.size())));
+					randomItemCursed = Util.random.nextInt(100) < 15;
+					if (!randomItemCursed) {
+						randomItem = Main.game.getItemGen().generateClothing(randomClothingList.get(Util.random.nextInt(randomClothingList.size())));
+					} else {
+						AbstractClothing clothing = Main.game.getItemGen().generateClothing(Util.randomItemFrom(randomClothingList), false);
+						List<ItemEffect> effects = Main.game.getItemGen().generateCursedClothingEnchantments(clothing, Util.random.nextInt(2) + 1);
+						effects.forEach(clothing::addEffect);
+						randomItem = clothing;
+					}
 					Main.game.getPlayerCell().getInventory().addClothing((AbstractClothing) randomItem);
 				}
 				return DominionEncounterDialogue.ALLEY_FIND_ITEM;

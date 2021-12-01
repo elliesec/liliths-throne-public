@@ -35,6 +35,7 @@ import java.util.Map.Entry;
 public abstract class AbstractEncounter {
 
 	protected static AbstractCoreItem randomItem;
+	protected static boolean randomItemCursed;
 	
 	protected static final double INCEST_ENCOUNTER_RATE = 0.2f;
 	protected static double IncestEncounterRate() { return INCEST_ENCOUNTER_RATE; }
@@ -556,6 +557,10 @@ public abstract class AbstractEncounter {
 	
 	public static AbstractCoreItem getRandomItem() {
 		return randomItem;
+	}
+
+	public static boolean isRandomItemCursed() {
+		return randomItemCursed;
 	}
 
 	public List<String> getPlaceTypeIds() {

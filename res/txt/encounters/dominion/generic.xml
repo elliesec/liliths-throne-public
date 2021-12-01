@@ -26,7 +26,19 @@
 	</p>
 	]]>
 	</htmlContent>
-	
+
+	<htmlContent tag="ALLEY_FIND_ITEM_CLOTHING_CURSED"><![CDATA[
+	<p>
+		As you reach down to pick up the [#SPECIAL_PARSE_0], a strange sensation washes over your body, radiating outwards from your [#pc.getArmType().getHandsNameSingular(pc)], and a strange sense of calmness fills your mind. [pc.speech(Must be a curse)], you think to yourself, but you nonetheless feel compelled to wear it.
+	</p>
+	<p>
+		[#SPECIAL_PARSE_1]
+	</p>
+	<p>
+		Finally, the strange sensation wears off, and you realise that the [#SPECIAL_PARSE_0] has sealed itself to your body. [pc.speech(Well, that's going to be a problem)], you think to yourself.
+	]]>
+	</htmlContent>
+
 	<htmlContent tag="HARPY_NESTS_FIND_ITEM"><![CDATA[
 	<p>
 		As you travel down the winding walkways, you suddenly catch sight of a flash of pink on the path ahead. Walking up to the splash of colour, you look down to see:
