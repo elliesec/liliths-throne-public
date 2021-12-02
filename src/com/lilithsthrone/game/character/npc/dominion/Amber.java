@@ -109,7 +109,7 @@ public class Amber extends NPC {
 		super(isImported, new NameTriplet("Amber"), "Acerbi",
 				"The highest-ranking of Zaranix's maids, Amber is clearly outraged by the fact that you're wandering around her master's house unsupervised.",
 				39, Month.OCTOBER, 17,
-				15,
+				30,
 				null, null, null,
 				new CharacterInventory(10), WorldType.ZARANIX_HOUSE_GROUND_FLOOR, PlaceType.ZARANIX_GF_LOUNGE, true);
 		
@@ -129,7 +129,7 @@ public class Amber extends NPC {
 			this.setBodyMaterial(BodyMaterial.FLESH);
 		}
 		if(Main.isVersionOlderThan(Game.loadingVersion, "0.3.3.8")) {
-			this.setLevel(15);
+			this.setLevel(30);
 			this.equipClothing();
 		}
 		if(Main.isVersionOlderThan(Game.loadingVersion, "0.3.5.1")) {
